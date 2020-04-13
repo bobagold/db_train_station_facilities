@@ -36,10 +36,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _search = '';
+  List<String> _results = [];
 
   void _searchTextChanged(String search) {
     setState(() {
       _search = search;
+      _results = search.contains(RegExp(r'Stuttgart Hbf', caseSensitive: false))
+          ? ['Stuttgart Hbf']
+          : [];
     });
   }
 
@@ -59,13 +63,25 @@ class _MyHomePageState extends State<MyHomePage> {
               onChanged: _searchTextChanged,
             ),
           ),
-          Text(
-            _search == ''
-                ? 'Please start to type station name'
-                : 'Nothing found',
-          ),
+          Expanded(child: ListView.builder(itemBuilder: _itemBuilder)),
         ],
       ),
     );
+  }
+
+  Widget _itemBuilder(BuildContext context, int index) {
+    if (_search == '' && index == 0) {
+      return ListTile(title: Text('Please start to type station name'));
+    }
+    if (_results.isEmpty && index == 0) {
+      return ListTile(title: Text('Nothing found'));
+    }
+    if (index >= _results.length) {
+      return null;
+    }
+    return ListTile(
+        title: Text(
+      _results[index],
+    ));
   }
 }

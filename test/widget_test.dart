@@ -34,5 +34,13 @@ void main() {
     // Verify that search results have a placeholder.
     expect(find.text('Please start to type station name'), findsOneWidget);
     expect(find.text('Nothing found'), findsNothing);
+
+    // Type search text.
+    await tester.enterText(find.byTooltip('Type here'), 'stuttgart hbf');
+    await tester.pump();
+
+    // Verify that our search results have changed.
+    expect(find.text('Please start to type station name'), findsNothing);
+    expect(find.text('Stuttgart Hbf'), findsOneWidget);
   });
 }
