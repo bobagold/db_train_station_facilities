@@ -9,11 +9,12 @@ class StationsApi {
 
   Future<List<Object>> find(String search) async {
     List<Object> results = [];
-    if (search.isNotEmpty && search.length > 2) {
+    var minCharacters = 3;
+    if (search.isNotEmpty && search.length >= minCharacters) {
       try {
         // todo throttle requests
         print('search: $search');
-        var r = await _api.stationsGet(searchstring: search);
+        var r = await _api.stationsGet(searchstring: '$search*');
         results = r.result;
       } on ApiException catch (e) {
         if (e.code == 404) {
@@ -24,6 +25,9 @@ class StationsApi {
       } catch (e) {
         results = ['Error while using API', e.toString()];
       }
+    }
+    if (search.length < minCharacters) {
+      results = ['at least $minCharacters characters'];
     }
     print('results: $results');
     return results;
