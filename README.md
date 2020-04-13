@@ -2,15 +2,21 @@
 
 Deutsche Bahn Train Station Facilities
 
-## Getting Started
+## A cross-platform flutter app for displaying actual train station facilities in Germany.
 
-This project is a starting point for a Flutter application.
+<p align="center">
+  <img width="300" height="534" src="docs/Screen1.png">
+  <img width="300" height="534" src="docs/Screen2.png">
+  <img width="300" height="534" src="docs/Screen3.png">
+</p>
 
-A few resources to get you started if this is your first Flutter project:
+This app is using 2 APIs from Deutsche Bahn -
+[list](https://developer.deutschebahn.com/store/apis/list) - StaDa and FaSta.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+In order to use the app, please copy access token from
+[your dev account](https://developer.deutschebahn.com/store/site/pages/subscriptions.jag)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+and paste it to a copy of `main.dart` file, for example, `main_my.dart`.
+
+To run the project from console, please specify your custom entry point,
+for example `flutter run -t lib/main_my.dart`.
