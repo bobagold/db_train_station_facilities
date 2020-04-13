@@ -43,12 +43,13 @@ class StationScreen extends StatelessWidget {
         title: Text(
           result is Facility ? _description(result) : result,
         ),
+        trailing: result is Facility ? Icon(_type(result.type)) : null,
     );
   }
 
   String _description(Facility result) => '${result.description ?? result.type} ${result.equipmentnumber}';
 
-  _icon(String state) {
+  IconData _icon(String state) {
     if (state == 'ACTIVE') {
       return Icons.check;
     }
@@ -56,5 +57,14 @@ class StationScreen extends StatelessWidget {
       return Icons.cancel;
     }
     return Icons.help;
+  }
+
+  IconData _type(String type) {
+    if (type == 'ESCALATOR') {
+      return Icons.swap_vert;
+    }
+    if (type == 'ELEVATOR') {
+      return Icons.swap_horiz;
+    }
   }
 }

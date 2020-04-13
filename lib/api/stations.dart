@@ -14,7 +14,7 @@ class StationsApi {
       try {
         // todo throttle requests
         print('search: $search');
-        var r = await _api.stationsGet(searchstring: '$search*');
+        var r = await _api.stationsGet(searchstring: '*$search*');
         results = r.result;
       } on ApiException catch (e) {
         if (e.code == 404) {
