@@ -1,7 +1,15 @@
+import 'package:dbstadafasta/api/stations.dart';
 import 'package:dbstadafasta/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stada/api.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(
+      Provider(
+        create: (context) => StationsApi(accessToken: ''),
+        child: MyApp(),
+      ),
+    );
 
 @immutable
 class MyApp extends StatelessWidget {
@@ -36,14 +44,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _search = '';
-  List<String> _results = [];
 
-  void _searchTextChanged(String search) {
+  // String | Station
+  List<Object> _results = [];
+
+  Future<void> _searchTextChanged(String search) async {
+    var api = Provider.of<StationsApi>(context, listen: false);
+    List<Object> results = search.isNotEmpty ? await api.find(search) : [];
     setState(() {
       _search = search;
-      _results = search.contains(RegExp(r'Stuttgart Hbf', caseSensitive: false))
-          ? ['Stuttgart Hbf']
-          : [];
+      _results = results;
     });
   }
 
@@ -79,9 +89,11 @@ class _MyHomePageState extends State<MyHomePage> {
     if (index >= _results.length) {
       return null;
     }
+    var result = _results[index];
     return ListTile(
-        title: Text(
-      _results[index],
-    ));
+      title: Text(
+        result is Station ? result.name : result,
+      ),
+    );
   }
 }

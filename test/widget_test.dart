@@ -5,15 +5,26 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
+import 'package:dbstadafasta/api/stations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:dbstadafasta/main.dart';
+import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
+
+class StationsApiMock extends Mock implements StationsApi {}
 
 void main() {
-  testWidgets('Train station list', (WidgetTester tester) async {
+  testWidgets('Train station list with no results', (WidgetTester tester) async {
+    var api = StationsApiMock();
+    when(api.find('abcdefg'))
+        .thenAnswer((_) async => []);
+
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(Provider<StationsApi>(
+      create: (context) => api,
+      child: MyApp(),
+    ));
 
     // Verify that search results have a placeholder.
     expect(find.text('Please start to type station name'), findsOneWidget);
@@ -34,6 +45,17 @@ void main() {
     // Verify that search results have a placeholder.
     expect(find.text('Please start to type station name'), findsOneWidget);
     expect(find.text('Nothing found'), findsNothing);
+  });
+  testWidgets('Train station list with a result', (WidgetTester tester) async {
+    var api = StationsApiMock();
+    when(api.find('stuttgart hbf'))
+        .thenAnswer((_) async => ['Stuttgart Hbf']);
+
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(Provider<StationsApi>(
+      create: (context) => api,
+      child: MyApp(),
+    ));
 
     // Type search text.
     await tester.enterText(find.byTooltip('Type here'), 'stuttgart hbf');

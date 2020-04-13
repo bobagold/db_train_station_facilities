@@ -20,6 +20,7 @@ class ApiClient {
 
   ApiClient({this.basePath: "https://api.deutschebahn.com/stada/v2"}) {
     // Setup authentications (key: authentication name, value: authentication).
+    _authentications['oauth'] = OAuth();
   }
 
   void addDefaultHeader(String key, String value) {
