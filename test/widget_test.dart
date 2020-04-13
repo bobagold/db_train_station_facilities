@@ -5,8 +5,11 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:dbstadafasta/api/facilities.dart';
 import 'package:dbstadafasta/api/stations.dart';
 import 'package:dbstadafasta/app.dart';
+import 'package:dbstadafasta/screens/station.dart';
+import 'package:fasta/api.dart' show Facility;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -15,13 +18,16 @@ import 'package:provider/provider.dart';
 import 'package:stada/api.dart';
 
 class StationsApiMock extends Mock implements StationsApi {}
+
+class FacilitiesApiMock extends Mock implements FacilitiesApi {}
+
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
 void main() {
-  testWidgets('Train station list with no results', (WidgetTester tester) async {
+  testWidgets('Train station list with no results',
+      (WidgetTester tester) async {
     var api = StationsApiMock();
-    when(api.find('abcdefg'))
-        .thenAnswer((_) async => []);
+    when(api.find('abcdefg')).thenAnswer((_) async => []);
 
     // Build our app and trigger a frame.
     await tester.pumpWidget(Provider<StationsApi>(
@@ -50,16 +56,28 @@ void main() {
     expect(find.text('Nothing found'), findsNothing);
   });
   testWidgets('Train station list with a result', (WidgetTester tester) async {
-    var api = StationsApiMock();
+    var apiStations = StationsApiMock();
+    var apiFacilities = FacilitiesApiMock();
     var station = Station();
     station.name = 'Stuttgart Hbf';
-    when(api.find('stuttgart hbf'))
-        .thenAnswer((_) async => [station]);
+    station.number = 1234;
+    var facility = Facility();
+    facility.description = 'Elevator';
+    facility.equipmentnumber = 2345;
+    when(apiStations.find('stuttgart hbf')).thenAnswer((_) async => [station]);
+    when(apiFacilities.find(1234)).thenAnswer((_) async => [facility]);
     final mockObserver = MockNavigatorObserver();
 
     // Build our app and trigger a frame.
-    await tester.pumpWidget(Provider<StationsApi>(
-      create: (context) => api,
+    await tester.pumpWidget(MultiProvider(
+      providers: [
+        Provider<StationsApi>(
+          create: (context) => apiStations,
+        ),
+        Provider<FacilitiesApi>(
+          create: (context) => apiFacilities,
+        ),
+      ],
       child: MaterialApp(
         home: MyHomePage(title: '-'),
         navigatorObservers: [mockObserver],
@@ -80,5 +98,26 @@ void main() {
 
     verify(mockObserver.didPush(any, any));
     expect(find.text('Facilities:'), findsOneWidget);
+    expect(find.text('Elevator 2345'), findsOneWidget);
+  });
+  testWidgets('Train station screen', (WidgetTester tester) async {
+    var station = Station();
+    station.name = 'Stuttgart Hbf';
+    station.number = 1234;
+    var facility = Facility();
+    facility.description = 'Elevator';
+    facility.equipmentnumber = 2345;
+
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StationScreen(station: station, facilities: [facility],),
+      ),
+    );
+
+    // Verify that our station & facilities are displayed.
+    expect(find.text('Stuttgart Hbf'), findsOneWidget);
+    expect(find.text('Facilities:'), findsOneWidget);
+    expect(find.text('Elevator 2345'), findsOneWidget);
   });
 }

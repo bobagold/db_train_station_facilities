@@ -1,3 +1,4 @@
+import 'package:dbstadafasta/api/facilities.dart';
 import 'package:dbstadafasta/api/stations.dart';
 import 'package:dbstadafasta/screens/station.dart';
 import 'package:dbstadafasta/theme.dart';
@@ -85,14 +86,22 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     var result = _results[index];
     return ListTile(
-        title: Text(
-          result is Station ? result.name : result,
-        ),
-        onTap: result is Station ? () => _tapStation(context, result) : null);
+      leading: result is Station ? null : Icon(Icons.error),
+      title: Text(
+        result is Station ? result.name : result,
+      ),
+      onTap: result is Station ? () => _tapStation(context, result) : null,
+    );
   }
 
-  _tapStation(BuildContext context, Station station) {
+  _tapStation(BuildContext context, Station station) async {
+    var facilities = await (Provider.of<FacilitiesApi>(context, listen: false))
+        .find(station.number);
+    print(facilities);
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => StationScreen(station: station)));
+        builder: (BuildContext context) => StationScreen(
+              station: station,
+              facilities: facilities,
+            )));
   }
 }
