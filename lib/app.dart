@@ -1,4 +1,5 @@
 import 'package:dbstadafasta/api/stations.dart';
+import 'package:dbstadafasta/screens/station.dart';
 import 'package:dbstadafasta/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -84,9 +85,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     var result = _results[index];
     return ListTile(
-      title: Text(
-        result is Station ? result.name : result,
-      ),
-    );
+        title: Text(
+          result is Station ? result.name : result,
+        ),
+        onTap: result is Station ? () => _tapStation(context, result) : null);
+  }
+
+  _tapStation(BuildContext context, Station station) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => StationScreen(station: station)));
   }
 }
