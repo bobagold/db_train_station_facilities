@@ -26,6 +26,8 @@ dependencies:
   provider:
   stada:
     path: ./stada
+  fasta:
+    path: ./fasta
 
 dev_dependencies:
   flutter_test:
