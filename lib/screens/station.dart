@@ -30,6 +30,7 @@ class StationScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget _itemBuilder(BuildContext context, int index) {
     if (facilities.isEmpty && index == 0) {
       return ListTile(title: Text('Nothing found'));
@@ -38,16 +39,20 @@ class StationScreen extends StatelessWidget {
       return null;
     }
     var result = facilities[index];
-    return ListTile(
+    return Tooltip(
+      message: result is Facility ? (result.stateExplanation ?? 'OK') : 'Error',
+      child: ListTile(
         leading: Icon(result is Facility ? _icon(result.state) : Icons.error),
         title: Text(
           result is Facility ? _description(result) : result,
         ),
         trailing: result is Facility ? Icon(_type(result.type)) : null,
+      ),
     );
   }
 
-  String _description(Facility result) => '${result.description ?? result.type} ${result.equipmentnumber}';
+  String _description(Facility result) =>
+      '${result.description ?? result.type} ${result.equipmentnumber}';
 
   IconData _icon(String state) {
     if (state == 'ACTIVE') {
