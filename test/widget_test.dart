@@ -11,20 +11,28 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:dbstadafasta/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Train station list', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that search results have a placeholder.
+    expect(find.text('Please start to type station name'), findsOneWidget);
+    expect(find.text('Nothing found'), findsNothing);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    // Type search text.
+    await tester.enterText(find.byTooltip('Type here'), 'abcdefg');
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that our search results have changed.
+    expect(find.text('Please start to type station name'), findsNothing);
+    expect(find.text('Nothing found'), findsOneWidget);
+
+    // Clear search text.
+    await tester.enterText(find.byTooltip('Type here'), '');
+    await tester.pump();
+
+    // Verify that search results have a placeholder.
+    expect(find.text('Please start to type station name'), findsOneWidget);
+    expect(find.text('Nothing found'), findsNothing);
   });
 }
