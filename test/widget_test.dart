@@ -6,9 +6,9 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:dbstadafasta/api/stations.dart';
+import 'package:dbstadafasta/app.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:dbstadafasta/main.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
