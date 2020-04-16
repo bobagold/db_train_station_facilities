@@ -5,7 +5,7 @@ import 'package:stada/api.dart';
 @immutable
 class StationScreen extends StatelessWidget {
   final Station station;
-  final List<Object> facilities;
+  final Future<List<Object>> facilities;
 
   const StationScreen({
     Key key,
@@ -25,31 +25,46 @@ class StationScreen extends StatelessWidget {
             title: Text('Facilities:'),
             leading: Icon(Icons.accessibility),
           ),
-          Expanded(child: ListView.builder(itemBuilder: _itemBuilder)),
+          FutureBuilder(
+            future: facilities,
+            builder: (context, snapshot) => snapshot.hasData
+                ? Expanded(
+                    child: ListView.builder(
+                      itemBuilder: _itemBuilder(snapshot.data),
+                    ),
+                  )
+                : ListTile(
+                    title: Text('Loading, please wait'),
+                    leading: CircularProgressIndicator(),
+                  ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _itemBuilder(BuildContext context, int index) {
-    if (facilities.isEmpty && index == 0) {
-      return ListTile(title: Text('Nothing found'));
-    }
-    if (index >= facilities.length) {
-      return null;
-    }
-    var result = facilities[index];
-    return Tooltip(
-      message: result is Facility ? (result.stateExplanation ?? 'OK') : 'Error',
-      child: ListTile(
-        leading: Icon(result is Facility ? _icon(result.state) : Icons.error),
-        title: Text(
-          result is Facility ? _description(result) : result,
-        ),
-        trailing: result is Facility ? Icon(_type(result.type)) : null,
-      ),
-    );
-  }
+  IndexedWidgetBuilder _itemBuilder(List<Object> facilities) =>
+      (BuildContext context, int index) {
+        if (facilities.isEmpty && index == 0) {
+          return ListTile(title: Text('Nothing found'));
+        }
+        if (index >= facilities.length) {
+          return null;
+        }
+        var result = facilities[index];
+        return Tooltip(
+          message:
+              result is Facility ? (result.stateExplanation ?? 'OK') : 'Error',
+          child: ListTile(
+            leading:
+                Icon(result is Facility ? _icon(result.state) : Icons.error),
+            title: Text(
+              result is Facility ? _description(result) : result,
+            ),
+            trailing: result is Facility ? Icon(_type(result.type)) : null,
+          ),
+        );
+      };
 
   String _description(Facility result) =>
       '${result.description ?? result.type} ${result.equipmentnumber}';

@@ -122,13 +122,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _tapStation(BuildContext context, Station station) async {
-    var facilities = await (Provider.of<FacilitiesApi>(context, listen: false))
-        .find(station.number);
-    print(facilities);
+    var facilitiesPromise =
+        Provider.of<FacilitiesApi>(context, listen: false).find(station.number);
+    print(facilitiesPromise);
     Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => StationScreen(
               station: station,
-              facilities: facilities,
+              facilities: facilitiesPromise,
             )));
   }
 }

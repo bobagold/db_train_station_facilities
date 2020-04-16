@@ -5,6 +5,8 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'dart:async';
+
 import 'package:dbstadafasta/api/facilities.dart';
 import 'package:dbstadafasta/api/stations.dart';
 import 'package:dbstadafasta/app.dart';
@@ -107,17 +109,25 @@ void main() {
     var facility = Facility();
     facility.description = 'Elevator';
     facility.equipmentnumber = 2345;
+    var facilities = Completer<List<Object>>();
 
     // Build our app and trigger a frame.
     await tester.pumpWidget(
       MaterialApp(
-        home: StationScreen(station: station, facilities: [facility],),
+        home: StationScreen(
+          station: station,
+          facilities: facilities.future,
+        ),
       ),
     );
 
     // Verify that our station & facilities are displayed.
     expect(find.text('Stuttgart Hbf'), findsOneWidget);
     expect(find.text('Facilities:'), findsOneWidget);
+    expect(find.text('Loading, please wait'), findsOneWidget);
+    facilities.complete([facility]);
+    await tester.pump();
+    expect(find.text('Loading, please wait'), findsNothing);
     expect(find.text('Elevator 2345'), findsOneWidget);
   });
 }

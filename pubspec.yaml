@@ -28,8 +28,7 @@ dependencies:
     path: ./stada
   fasta:
     path: ./fasta
-  bouncer:
-    git: https://github.com/bobagold/bouncer.git
+  bouncer: ^0.1.0
 
 dev_dependencies:
   flutter_test:

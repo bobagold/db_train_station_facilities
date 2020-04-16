@@ -32,12 +32,10 @@ packages:
   bouncer:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "33849f1102bb893ea12213830cf4bf0f1b0b5109"
-      url: "https://github.com/bobagold/bouncer.git"
-    source: git
-    version: "0.0.1"
+      name: bouncer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   charcode:
     dependency: transitive
     description:
