@@ -5,6 +5,7 @@ import 'package:dbstadafasta/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stada/api.dart';
+import 'package:bouncer/bouncer.dart';
 
 @immutable
 class MyApp extends StatelessWidget {
@@ -43,13 +44,36 @@ class _MyHomePageState extends State<MyHomePage> {
   // String | Station
   List<Object> _results = [];
 
-  Future<void> _searchTextChanged(String search) async {
-    var api = Provider.of<StationsApi>(context, listen: false);
-    List<Object> results = search.isNotEmpty ? await api.find(search) : [];
-    setState(() {
-      _search = search;
-      _results = results;
-    });
+  Subscription _debounceSubscription;
+
+  static Bouncer _bouncer(BuildContext context) {
+    try {
+      return Provider.of<Bouncer>(context, listen: false);
+    } catch (e) {
+      return NoBouncer();
+    }
+  }
+
+  void _searchTextChanged(BuildContext context, String search) {
+    _debounceSubscription = _bouncer(context).debounce(
+      request: () async {
+        var api = Provider.of<StationsApi>(context, listen: false);
+        return search.isNotEmpty ? await api.find(search) : [];
+      },
+      responseHandler: (List<Object> results) {
+        setState(() {
+          _search = search;
+          _results = results;
+        });
+      },
+      oldSubscription: _debounceSubscription,
+    );
+  }
+
+  @override
+  dispose() {
+    _debounceSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -64,8 +88,11 @@ class _MyHomePageState extends State<MyHomePage> {
           Tooltip(
             message: 'Type here',
             child: TextField(
-              decoration: InputDecoration(hintText: 'Enter a search term'),
-              onChanged: _searchTextChanged,
+              decoration: InputDecoration(
+                hintText: 'Enter a search term',
+                contentPadding: EdgeInsets.symmetric(horizontal: 16),
+              ),
+              onChanged: (value) => _searchTextChanged(context, value),
             ),
           ),
           Expanded(child: ListView.builder(itemBuilder: _itemBuilder)),

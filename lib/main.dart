@@ -1,3 +1,4 @@
+import 'package:bouncer/bouncer.dart';
 import 'package:dbstadafasta/api/facilities.dart';
 import 'package:dbstadafasta/api/stations.dart';
 import 'package:dbstadafasta/app.dart';
@@ -20,6 +21,10 @@ void main() {
         Provider(
           create: (context) =>
               FacilitiesApi(accessToken: accessToken),
+        ),
+        Provider<Bouncer>(
+          create: (context) =>
+              TimerBouncer(const Duration(milliseconds: 300))
         ),
       ],
       child: MyApp(),
